@@ -106,7 +106,8 @@ INCS_Release := \
 	-I$(srcdir)/../../node_modules/nan
 
 OBJS := \
-	$(obj).target/$(TARGET)/market_data.o
+	$(obj).target/$(TARGET)/market_data.o \
+	$(obj).target/$(TARGET)/moving_avg.o
 
 # Add to the list of files we specially track dependencies for.
 all_deps += $(OBJS)

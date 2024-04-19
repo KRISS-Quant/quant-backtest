@@ -1,28 +1,29 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-// const usersRouter = require('./routes/usersRoutes');
-
+const multer = require('multer');
 const app = express();
 const port = 8080;
 
-// For parsing JSON bodies
+const upload = multer();
 app.use(bodyParser.json());
 
+app.post('/algo/:algo', upload.single('file'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).send("No file uploaded");
+    }
 
-app.post('/algo/:algo', (req, res) => {
-  const algorithm = require(`./algo/${algo}`);
+    const fileData = req.file.buffer.toString('utf-8');
+    const data = JSON.parse(fileData);
 
-  // data to be passed to the trading algorithm
-  const input_data = req.body;
-  console.log('Received data:', input_data);
+    const algorithm = require(`./algo/${req.params.algo}`);
+    console.log("Received data: ", req.body);
 
-  // data to be derived from the trading algorithm
-  const response = {
-    message: "data received successfully",
-    data: data
+    res.json(await algorithm.response(data));
+  } catch {
+    console.error("Error loading algorithm module:", error);
+    res.status(500).send("Error loading algorithm");
   }
-
-  res.json(response);
 });
 
 app.listen(port, () => {

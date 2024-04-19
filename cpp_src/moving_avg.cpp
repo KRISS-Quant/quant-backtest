@@ -1,7 +1,4 @@
-#include<iostream>
-using namespace std;
+#include "market_data.h"
 
 int main(){
-
-  return 0;
-}
+  }
