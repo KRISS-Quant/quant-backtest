@@ -1,0 +1,57 @@
+{
+    "sma": {
+        "name": "sma",
+        "displayName": "SMA (Simple Moving Average)",
+        "parameters": [
+            {
+                "id": "period",
+                "displayName": "Period",
+                "type": "integer",
+                "defaultValue": 20,
+                "description": "Number of periods to calculate the average over"
+            },
+            {
+                "id": "percentile",
+                "displayName": "Percentile",
+                "type": "integer",
+                "defaultValue": 10,
+                "description": "Percentile to calculate the average over"
+            }
+        ],
+        "tickers": [
+            {
+                "id": "symbol",
+                "displayName": "Symbol",
+                "defaultValue": "BTCUSDT",
+                "description": "Symbol to calculate the average over"
+            }
+        ]
+    },
+    "pair": {
+        "name": "pair",
+        "displayName": "Pair (Pair Trading)",
+        "parameters": [
+            {
+                "id": "percentile",
+                "displayName": "Percentile",
+                "type": "integer",
+                "defaultValue": 10,
+                "description": "Percentile to calculate the average over"
+            }
+        ],
+        "tickers": [
+            {
+                "id": "symbol_1",
+                "displayName": "Symbol 1",
+                "defaultValue": "BTCUSDT",
+                "description": "Symbol 1 to calculate the average over"
+            },
+            {
+                "id": "symbol_2",
+                "displayName": "Symbol 2",
+                "defaultValue": "ETHUSDT",
+                "description": "Symbol 2 to calculate the average over"
+            }
+        ]
+    }
+}
