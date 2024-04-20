@@ -1,0 +1,81 @@
+<html>
+    <head>
+        <title>Binance Crypto Ticker Crawler</title>
+        <link rel="stylesheet" type="text/css" href="css/style.css"></script>
+        <script type="text/javascript" src="js/utils.js"></script>
+        <script type="text/javascript">
+            var intervalId;
+            function clear() {
+                if (typeof intervalId !== 'undefined') {
+                    window.clearInterval(intervalId);
+                    intervalId = undefined;
+                }
+            }
+            function updateCandle() {
+                let symbol = document.getElementById("symbol").value;
+                let candle = document.getElementById("interval-select").value;
+                getCandle(symbol, candle)
+                    .then((response)=>{
+                        document.getElementById("textbox").innerText = new Date();
+                        response.reverse();
+                        let str = "<table><th>Time</th><th>Open</th><th>High</th><th>Low</th><th>Close</th><th>Volume</th>";
+                        for (let param of response) {
+                            let date = new Date(param[0]);
+                            str += `<tr><td>${toTime(date)}</td>`;
+                            for (let i=1; i<5; i++) {
+                                str += `<td>${parseFloat(param[i]).toFixed(2)}</td>`;
+                            }
+                            str += `<td>${param[5]}</td></tr>`;
+                        }
+                        str += "</table>";
+                        document.getElementById("data-container").innerHTML = str;
+                    });
+                };
+            function updatePeriodic() {
+                clear();
+                intervalId = window.setInterval(updateCandle, 5000);
+
+            }
+        </script>
+    </head>
+    <body>
+        <div id="container">
+            <h1>Binance Crypto Candle Crawler</h1>
+            <div>
+                <label>Symbol: </label><input id="symbol" value="BTCUSDT"></input><br>
+                <label>Interval: </label>
+                <select id="interval-select" value="15m">
+                    <option value="1m">1m</option>
+                    <option value="3m">3m</option>
+                    <option value="5m">5m</option>
+                    <option value="15m" selected="selected">15m</option>
+                    <option value="30m">30m</option>
+                    <option value="1h">1h</option>
+                    <option value="2h">2h</option>
+                    <option value="4h">4h</option>
+                    <option value="6h">6h</option>
+                    <option value="8h">8h</option>
+                    <option value="12h">12h</option>
+                    <option value="1d">1d</option>
+                    <option value="3d">3d</option>
+                    <option value="1w">1w</option>
+                    <option value="1M">1M</option>
+                </select><br>
+                <button class="button" id="button">Get Candle</button><br>
+                <button class="button" id="button_periodic">Repeat Every 5s</button><br>
+                <button class="button" id="turn_off">Stop Repeating</button>
+            </div>
+            <p id="textbox">Nothing Yet</p>
+            <div id="data-container"></div>
+        </div>
+
+        <script type="text/javascript">
+            let button = document.getElementById("button"); 
+            let button_periodic = document.getElementById("button_periodic"); 
+            let turn_off = document.getElementById("turn_off"); 
+            button.addEventListener("click", updateCandle);
+            button_periodic.addEventListener("click", updatePeriodic);
+            turn_off.addEventListener("click", clear);
+        </script>
+    </body>
+</html>

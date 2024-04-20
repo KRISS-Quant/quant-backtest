@@ -1,0 +1,74 @@
+html, body {
+    background-color: #fafafa;
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+#container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100%;
+    margin: 0;
+    padding: 20px;
+}
+#data-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    border: 1px solid lightgrey;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+#textbox {
+    background-color: #4CAF50;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 5px;
+    width: 200px;
+}
+
+label {
+    margin-top: 10px;
+}
+
+table {
+    border-collapse: collapse;
+    border: 2px solid grey;
+    width: 100%;
+    margin-top: 10px;    
+}
+
+td, th {
+    border-left: 2px solid grey;
+    border-right: 2px solid grey;
+}
+
+th {
+    border-bottom: 2px solid grey;
+}
