@@ -1,24 +1,35 @@
 <html>
     <head>
-        <title>Binance Crypto Ticker Crawler</title>
+        <title>KRISS QT Backtester</title>
         <link rel="stylesheet" type="text/css" href="src/css/style.css"></script>
         <link rel="icon" href="src/img/favicon.ico" type="image/x-icon">
         <script type="text/javascript" src="src/js/utils.js"></script>
-        <script type="text/javascript">
-            var intervalId;
-            function clear() {
-                if (typeof intervalId !== 'undefined') {
-                    window.clearInterval(intervalId);
-                    intervalId = undefined;
-                }
-            }
+        <script type="text/javascript"> // crawling
             function updateCandle() {
-                let symbol = document.getElementById("symbol").value;
+                let data = {};
+                let promises = [];
+                let model = document.getElementById("model-select").value;
                 let candle = document.getElementById("interval-select").value;
-                getCandle(symbol, candle)
+                
+                (document.model_metadata[model].tickers).forEach((ticker) => {
+                    let symbol = document.getElementById(ticker.id).value;
+                    promises.push(
+                        processCandle(symbol, candle)
+                        .then((response) => {
+                            data[ticker.id] = response;
+                        }));
+                });
+                Promise.all(promises).then(() => {
+                    document.getElementById("textbox").innerText = new Date();
+                    document.getElementById("data-container").innerHTML = "";
+                    (document.model_metadata[model].tickers).forEach((ticker) => {
+                        document.getElementById("data-container").innerHTML += data[ticker.id];
+                    });
+                });
+            }
+            async function processCandle(symbol, candle) {
+                return getCandle(symbol, candle)
                     .then((response)=>{
-                        document.getElementById("textbox").innerText = new Date();
-                        response.reverse();
                         let str = "<table><th>Time</th><th>Open</th><th>High</th><th>Low</th><th>Close</th><th>Volume</th>";
                         for (let param of response) {
                             let date = new Date(param[0]);
@@ -29,21 +40,69 @@
                             str += `<td>${param[5]}</td></tr>`;
                         }
                         str += "</table>";
-                        document.getElementById("data-container").innerHTML = str;
+                        return str;
                     });
                 };
-            function updatePeriodic() {
-                clear();
-                intervalId = window.setInterval(updateCandle, 5000);
-
+        </script>
+        <script type="text/javascript"> // model setting
+            document.model_metadata = {};
+            
+            function updateParams() {
+                let model = document.getElementById("model-select").value;
+                // update params label and input
+                let params = document.getElementById("params");
+                params.innerHTML = "";
+                for (const param of document.model_metadata[model].parameters) {
+                    let label = document.createElement("label");
+                    label.innerHTML = `<p title='${param.description}'>${param.displayName}:</p>`;
+                    params.appendChild(label);
+                    let input = document.createElement("input");
+                    input.id = param.id;
+                    input.value = param.defaultValue;
+                    params.appendChild(input);
+                    params.appendChild(document.createElement("br"));
+                }
+                // update symbols label and input
+                let symbols = document.getElementById("symbols");
+                symbols.innerHTML = "";
+                for (const ticker of document.model_metadata[model].tickers) {
+                    let label = document.createElement("label");
+                    label.innerHTML = `<p title='${ticker.description}'>${ticker.displayName}:</p>`;
+                    symbols.appendChild(label);
+                    let input = document.createElement("input");
+                    input.id = ticker.id;
+                    input.value = ticker.defaultValue;
+                    symbols.appendChild(input);
+                    symbols.appendChild(document.createElement("br"));
+                }
             }
+            
+            function loadModelMetadata() {
+                fetch("/algoMetadata").then((response) => { // import metadata
+                    return response.json();
+                }).then((data) => {
+                    document.model_metadata = data;
+                    // set model select
+                    for (const [key, value] of Object.entries(document.model_metadata)) {
+                        let option = document.createElement("option");
+                        option.value = key;
+                        option.text = value.displayName;
+                        model_select.appendChild(option);
+                    }
+                    // set default params
+                    updateParams();
+                    return data;
+                });
+            }
+            loadModelMetadata();
         </script>
     </head>
     <body>
         <div id="container">
-            <h1>Binance Crypto Candle Crawler</h1>
+            <h1>KRISS QT Backtester</h1>
             <div>
-                <label>Symbol: </label><input id="symbol" value="BTCUSDT"></input><br>
+                <label>Model: </label>
+                <select id="model-select"></select><br>
                 <label>Interval: </label>
                 <select id="interval-select" value="15m">
                     <option value="1m">1m</option>
@@ -62,9 +121,11 @@
                     <option value="1w">1w</option>
                     <option value="1M">1M</option>
                 </select><br>
-                <button class="button" id="button">Get Candle</button><br>
-                <button class="button" id="button_periodic">Repeat Every 5s</button><br>
-                <button class="button" id="turn_off">Stop Repeating</button>
+                <div id="symbols"></div>
+                <div id="params"></div>
+                <label>Start Time: </label><input type="datetime-local" id="start-time"></input><br>
+                <label>End Time: </label><input type="datetime-local" id="end-time"></input><br>
+                <button class="button" id="button">Evaluate</button><br>
             </div>
             <p id="textbox">Nothing Yet</p>
             <div id="data-container"></div>
@@ -72,11 +133,11 @@
 
         <script type="text/javascript">
             let button = document.getElementById("button"); 
-            let button_periodic = document.getElementById("button_periodic"); 
-            let turn_off = document.getElementById("turn_off"); 
             button.addEventListener("click", updateCandle);
-            button_periodic.addEventListener("click", updatePeriodic);
-            turn_off.addEventListener("click", clear);
+
+            let model_select = document.getElementById("model-select");
+            model_select.addEventListener("change", updateParams);
+            
         </script>
     </body>
 </html>
