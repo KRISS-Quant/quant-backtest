@@ -24,7 +24,7 @@ function setParamValues(candle_size, model, params = {}) {
 }
 
 function crawlPromise(symbol, candle_size, temp_start_time, temp_end_time) {
-    getCandle(symbol, candle_size, temp_start_time, temp_end_time).then((response) => {
+    return getCandle(symbol, candle_size, temp_start_time, temp_end_time).then((response) => {
         let data = response.map((candle) => {
             return candleDataProcess(candle);
         });
