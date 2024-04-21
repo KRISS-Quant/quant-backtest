@@ -4,44 +4,61 @@
         <link rel="stylesheet" type="text/css" href="src/css/style.css"></script>
         <link rel="icon" href="src/img/favicon.ico" type="image/x-icon">
         <script type="text/javascript" src="src/js/utils.js"></script>
+        <script type="text/javascript" src="src/js/promise_processing.js"></script>
+        <script type="text/javascript" src="src/js/server_commute.js"></script>
+        <script type="text/javascript" src="src/js/handleResponse.js"></script>
         <script type="text/javascript"> // crawling
             function updateCandle() {
-                let data = {};
+                let req_data = {
+                    id: 0,
+                    params: {},
+                    tickers: []
+                };
                 let promises = [];
                 let model = document.getElementById("model-select").value;
-                let candle = document.getElementById("interval-select").value;
-                
-                (document.model_metadata[model].tickers).forEach((ticker) => {
+                let candle_size = document.getElementById("interval-select").value;
+                // set keys
+                let ticker_data = {};
+                let ticker_objs = document.model_metadata[model].tickers;
+                ticker_objs.map((ticker) => {ticker_data[ticker.id]=[];});
+
+                // get param value
+                setParamValues(candle_size, model, req_data.params);
+
+                // request crawling
+                ticker_objs.forEach((ticker) => {
                     let symbol = document.getElementById(ticker.id).value;
                     promises.push(
-                        processCandle(symbol, candle)
+                        processCandle(symbol, candle_size)
                         .then((response) => {
-                            data[ticker.id] = response;
+                            ticker_data[ticker.id] = response;
                         }));
                 });
+                // make POST request
                 Promise.all(promises).then(() => {
-                    document.getElementById("textbox").innerText = new Date();
-                    document.getElementById("data-container").innerHTML = "";
-                    (document.model_metadata[model].tickers).forEach((ticker) => {
-                        document.getElementById("data-container").innerHTML += data[ticker.id];
-                    });
+                    return postToBacktester(model, req_data, ticker_data);
+                }).then((response) => {
+                    handleResponse(response);
                 });
+                
             }
-            async function processCandle(symbol, candle) {
-                return getCandle(symbol, candle)
-                    .then((response)=>{
-                        let str = "<table><th>Time</th><th>Open</th><th>High</th><th>Low</th><th>Close</th><th>Volume</th>";
-                        for (let param of response) {
-                            let date = new Date(param[0]);
-                            str += `<tr><td>${toTime(date)}</td>`;
-                            for (let i=1; i<5; i++) {
-                                str += `<td>${parseFloat(param[i]).toFixed(2)}</td>`;
-                            }
-                            str += `<td>${param[5]}</td></tr>`;
-                        }
-                        str += "</table>";
-                        return str;
-                    });
+            async function processCandle(symbol, candle_size) {
+                // convert datetime-local to timestamp
+                let candle_length = intervalToTimestamp(candle_size);
+                let start_time = new Date(document.getElementById("start-time").value).getTime();
+                let end_time = new Date(document.getElementById("end-time").value).getTime();
+                
+                let max_iterations = Math.ceil((end_time - start_time) / (candle_length * 1000));
+                
+                let promises = [];
+                let data_container = new Array(max_iterations);
+                
+                // adds all crawl promises
+                updateDataContainter(symbol, candle_size, start_time, end_time, candle_length, promises, data_container);
+                
+                return Promise.all(promises).then(() => {
+                    return data_container.flat();
+                });
                 };
         </script>
         <script type="text/javascript"> // model setting
