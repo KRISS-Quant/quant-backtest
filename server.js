@@ -5,7 +5,8 @@ const app = express();
 const port = 8080;
 
 const upload = multer();
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 
 app.use("/src", express.static(__dirname + "/src"));
 app.get('/', function(req, res){
@@ -18,7 +19,7 @@ app.get('/algoMetadata', function(req, res){
 app.post('/algo/:algo', upload.single('file'), async (req, res) => {
   try {
     const algorithm = require(`./algo/${req.params.algo}`);
-    console.log("Received data: ", req.body);
+    //console.log("Received data: ", req.body);
 
     res.json(await algorithm.response(req.body));
   } catch {
