@@ -326,13 +326,13 @@ $(obj).$(TOOLSET)/%.o: $(obj)/%.S FORCE_DO_CMD
 
 ifeq ($(strip $(foreach prefix,$(NO_LOAD),\
     $(findstring $(join ^,$(prefix)),\
-                 $(join ^,addon.target.mk)))),)
-  include addon.target.mk
+                 $(join ^,sma_addon.target.mk)))),)
+  include sma_addon.target.mk
 endif
 
 quiet_cmd_regen_makefile = ACTION Regenerating $@
 cmd_regen_makefile = cd $(srcdir); /opt/homebrew/lib/node_modules/node-gyp/gyp/gyp_main.py -fmake --ignore-environment "-Dlibrary=shared_library" "-Dvisibility=default" "-Dnode_root_dir=/Users/kyunuya/Library/Caches/node-gyp/21.7.3" "-Dnode_gyp_dir=/opt/homebrew/lib/node_modules/node-gyp" "-Dnode_lib_file=/Users/kyunuya/Library/Caches/node-gyp/21.7.3/<(target_arch)/node.lib" "-Dmodule_root_dir=/Users/kyunuya/Desktop/HKUST/Societies/KRISS/projects/project2/cpp_src" "-Dnode_engine=v8" "--depth=." "-Goutput_dir=." "--generator-output=build" -I/Users/kyunuya/Desktop/HKUST/Societies/KRISS/projects/project2/cpp_src/build/config.gypi -I/opt/homebrew/lib/node_modules/node-gyp/addon.gypi -I/Users/kyunuya/Library/Caches/node-gyp/21.7.3/include/node/common.gypi "--toplevel-dir=." binding.gyp
-Makefile: $(srcdir)/binding.gyp $(srcdir)/build/config.gypi $(srcdir)/../../../../../../../../../opt/homebrew/lib/node_modules/node-gyp/addon.gypi $(srcdir)/../../../../../../../Library/Caches/node-gyp/21.7.3/include/node/common.gypi
+Makefile: $(srcdir)/../../../../../../../../../opt/homebrew/lib/node_modules/node-gyp/addon.gypi $(srcdir)/build/config.gypi $(srcdir)/binding.gyp $(srcdir)/../../../../../../../Library/Caches/node-gyp/21.7.3/include/node/common.gypi
 	$(call do_cmd,regen_makefile)
 
 # "all" is a concatenation of the "all" targets from all the included

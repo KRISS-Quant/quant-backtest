@@ -1,0 +1,1 @@
+cmd_Release/pair_trading_addon.node := c++ -bundle -undefined dynamic_lookup -Wl,-search_paths_first -mmacosx-version-min=11.0 -arch arm64 -L./Release -stdlib=libc++  -o Release/pair_trading_addon.node Release/obj.target/pair_trading_addon/market_data.o Release/obj.target/pair_trading_addon/pair_trading.o 

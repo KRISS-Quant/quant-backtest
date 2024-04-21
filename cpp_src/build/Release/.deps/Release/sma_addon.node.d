@@ -1,0 +1,1 @@
+cmd_Release/sma_addon.node := c++ -bundle -undefined dynamic_lookup -Wl,-search_paths_first -mmacosx-version-min=11.0 -arch arm64 -L./Release -stdlib=libc++  -o Release/sma_addon.node Release/obj.target/sma_addon/main.o Release/obj.target/sma_addon/market_data.o Release/obj.target/sma_addon/moving_avg.o 

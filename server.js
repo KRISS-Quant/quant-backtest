@@ -1,29 +1,30 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const multer = require('multer');
 const app = express();
 const port = 8080;
 
-const upload = multer();
 app.use(bodyParser.json());
 
-app.post('/algo/:algo', upload.single('file'), async (req, res) => {
-  try {
-    if (!req.file) {
-      return res.status(400).send("No file uploaded");
-    }
+// app.use((req, res, next) => {
+//   bodyParser.json()(req, res, err => {
+//     if (err) {
+//       console.error(err);
+//       return res.sendStatus(400); // Bad request
+//     }
+//
+//     next();
+//   });
+// });
 
-    const fileData = req.file.buffer.toString('utf-8');
-    const data = JSON.parse(fileData);
-
-    const algorithm = require(`./algo/${req.params.algo}`);
-    console.log("Received data: ", req.body);
-
-    res.json(await algorithm.response(data));
-  } catch {
-    console.error("Error loading algorithm module:", error);
-    res.status(500).send("Error loading algorithm");
+app.post('/algo/v1/:algo', async (req, res) => {
+  if (!req.body) {
+    return res.status(400).send("No body received");
   }
+
+  console.log(req.body);
+
+  const algorithm = require(`./algo/v1/${req.params.algo}`);
+  res.json(await algorithm.response(req.body));
 });
 
 app.listen(port, () => {
