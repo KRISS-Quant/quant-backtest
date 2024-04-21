@@ -80,3 +80,13 @@ function candleDataProcess(data) {
       };
     return processed_json;
 }
+
+function inputValidator() {
+    let start_time = new Date(document.getElementById("start-time").value).getTime();
+    let end_time = new Date(document.getElementById("end-time").value).getTime();
+    if (isNaN(start_time) || isNaN(end_time) || start_time >= end_time) {
+        alert("Invalid Time Range");
+        return false;
+    }
+    return true;
+}

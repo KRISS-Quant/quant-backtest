@@ -9,6 +9,8 @@
         <script type="text/javascript" src="src/js/handleResponse.js"></script>
         <script type="text/javascript"> // crawling
             function updateCandle() {
+                if (inputValidator() == false) return;
+                
                 let req_data = {
                     id: 0,
                     params: {},
