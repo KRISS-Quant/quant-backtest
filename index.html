@@ -7,9 +7,11 @@
         <script type="text/javascript" src="src/js/promise_processing.js"></script>
         <script type="text/javascript" src="src/js/server_commute.js"></script>
         <script type="text/javascript" src="src/js/handleResponse.js"></script>
+        <script type="text/javascript" src="src/js/candleStickChart.js"></script>
         <!-- apexcharts library -->
         <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
         <script type="text/javascript"> // crawling
+            document.ticker_data = {};
             function updateCandle() {
                 if (inputValidator() == false) return;
                 
@@ -38,7 +40,7 @@
                             ticker_data[ticker.id] = response;
                         }));
                 });
-                console.log(ticker_data);
+                model.ticker_data = ticker_data;
                 // make POST request
                 Promise.all(promises).then(() => {
                     return postToBacktester(model, req_data, ticker_data);
@@ -152,16 +154,29 @@
             <!-- <p id="textbox">Nothing Yet</p> -->
             <div id="chart"></div>
         </div>
-        <script src = ".\src\js\testData.js"> </script>
+        <!-- <script src = ".\src\js\testData.js"> </script> -->
         <script>
+          //generate and render chart
+            function generateAndRenderChart() {
+                let options = generateChartOptions();
+                console.log(options);
+                let chart = new ApexCharts(document.querySelector("#chart"), options);
+                chart.render();
+            }
             let button = document.getElementById("button"); 
             button.addEventListener("click", updateCandle);
             
             let model_select = document.getElementById("model-select");
             model_select.addEventListener("change", updateParams);
-      
-            var chart = new ApexCharts(document.querySelector("#chart"), options);
-            chart.render();
+            //fetch test data and render chart
+            fetch('/tickerData')
+                .then(response => response.json())
+                .then(data => {
+                    document.ticker_data = data;
+                    generateAndRenderChart();
+                })
+                .catch(error => console.error('Error:', error));
+            
         </script>
     </body>
 </html>
