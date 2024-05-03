@@ -82,10 +82,8 @@ function candleDataProcess(data) {
 }
 
 function inputValidator() {
-    let start_time = new Date(document.getElementById("start-time").value);
-    console.log(start_time);
-    let end_time = new Date(document.getElementById("end-time").value).getTime();
-    console.log(end_time);
+    let start_time = new Date(document.getElementById("start-date").value + " " + document.getElementById("start-time").value).getTime();
+    let end_time = new Date(document.getElementById("end-date").value + " " + document.getElementById("end-time").value).getTime();
     if (isNaN(start_time) || isNaN(end_time) || start_time >= end_time) {
         alert("Invalid Time Range");
         return false;
