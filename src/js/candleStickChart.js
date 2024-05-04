@@ -91,15 +91,16 @@ if (Object.keys(document.ticker_data).length >= 2){
       } 
       cnt +=1;
     }
-    console.log(options.min_max);
+    console.log(options.min_max[0]);
     options.tooltip = {
       custom: function({ series, seriesIndex, dataPointIndex, w }) {
+          console.log(seriesIndex);
           var dataPoint = w.config.series[seriesIndex].data[dataPointIndex];
           var startTime = new Date(dataPoint.x);
           var tooltipHtml = '<div class="arrow_box">';
           tooltipHtml += '<span>Start Time: ' + startTime + '</span><br/>';
           tooltipHtml += '<span>Series ' + (seriesIndex+1) + ':</span><br/>';
-          tooltipHtml += '<span>Close: ' + dataPoint.y *(options.min_max[seriesIndex][1]-options.min_max[seriesIndex][0])+ options.min_max[seriesIndex][0] + '</span><br/>';
+          tooltipHtml += '<span>Close: ' +(( dataPoint.y  *(options.min_max[seriesIndex][1]-options.min_max[seriesIndex][0]))+ options.min_max[seriesIndex][0])+ '</span><br/>';
           tooltipHtml += '</div>';
           return tooltipHtml;
       }
