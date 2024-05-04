@@ -12,11 +12,16 @@
         <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
         <script type="text/javascript"> // crawling
             document.ticker_data = {};
+            document.options = {};
+            document.chart = null;
             //generate and render chart
             function generateAndRenderChart() {
-                let options = generateChartOptions();
-                let chart = new ApexCharts(document.querySelector("#chart"), options);
-                chart.render();
+                if (document.chart) {
+                    document.chart.destroy();
+                }
+                document.options = generateChartOptions();
+                document.chart = new ApexCharts(document.querySelector("#chart"), document.options);
+                document.chart.render();
             }
             function updateCandle() {
                 if (inputValidator() == false) return;
@@ -51,7 +56,7 @@
                 // make POST request
                 Promise.all(promises).then(() => {
                     generateAndRenderChart();
-                    // return postToBacktester(model, req_data, ticker_data);
+                    return postToBacktester(model, req_data, ticker_data);
                 }).then((response) => {
                     handleResponse(response);
                 });
