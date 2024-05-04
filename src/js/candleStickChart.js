@@ -35,7 +35,7 @@ function generateChartOptions(){
               downward: '#FF0000'
           }
       }
-  },   
+  },
 
     xaxis: {
       type: 'datetime',
@@ -140,6 +140,18 @@ if (Object.keys(document.ticker_data).length >= 2){
       }
   };
 }
-
 return options;
 }
+
+// function addSignals(seriesIndex, data){
+//     document.options.series[seriesIndex].markers = {
+//       size: 3,
+//       shape: 'triangle-down',
+//       strokeWidth: 2,
+//       strokeColor: '#FF0000', // Red
+//       fillColor: '#FF0000',
+//       offsetX: 0,
+//       offsetY: 0,
+//       radius: 2
+//     }
+// }

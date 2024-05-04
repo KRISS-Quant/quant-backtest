@@ -175,10 +175,8 @@
                 <label>End Time: </label><input type="date" id="end-date"> </label><input type="time" id="end-time"></input><br>
                 <button class="button" id="button">Evaluate</button><br>
             </div>
-            <!-- <p id="textbox">Nothing Yet</p> -->
             <div id="chart"></div>
         </div>
-        <!-- <script src = ".\src\js\testData.js"> </script> -->
         <script>
           
             let button = document.getElementById("button"); 
@@ -186,14 +184,6 @@
             
             let model_select = document.getElementById("model-select");
             model_select.addEventListener("change", updateParams);
-            //fetch test data and render chart
-            // fetch('/tickerData')
-            //     .then(response => response.json())
-            //     .then(data => {
-            //         document.ticker_data = data;
-            //         generateAndRenderChart();
-            //     })
-            //     .catch(error => console.error('Error:', error));
             
         </script>
         <script type="text/javascript" src="src/js/KRISS.js"></script>
