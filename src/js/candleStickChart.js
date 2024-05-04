@@ -47,8 +47,9 @@ function generateChartOptions(){
           }
       }
     };
-    if (Object.keys(document.ticker_data).length == 2){
+    if (true){
         var cnt = 0;
+        options.min_max = [];
         for (ticker in document.ticker_data){
           var tickerData = document.ticker_data[ticker];
           var temp = [];
@@ -57,6 +58,7 @@ function generateChartOptions(){
           }
           var min = Math.min(...temp.flat());
           var max = Math.max(...temp.flat());
+          options.min_max.push([min, max]);
           
           var normalized_data = normalize(tickerData, min, max);
           console.log(normalized_data);

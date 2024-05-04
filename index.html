@@ -14,12 +14,23 @@
             document.ticker_data = {};
             document.options = {};
             document.chart = null;
+            
+            function generateTitle() {
+                let model = document.getElementById("model-select").value;
+                let candle_size = document.getElementById("interval-select").value;
+                let ticker_objs = document.model_metadata[model].tickers;
+                let symbols = ticker_objs.map((ticker) => {
+                    return document.getElementById(ticker.id).value;});
+                let str = `${symbols.join('/')} ${model} ${candle_size}`;
+                return str;
+            }
             //generate and render chart
             function generateAndRenderChart() {
                 if (document.chart) {
                     document.chart.destroy();
                 }
                 document.options = generateChartOptions();
+                document.options.title.text = generateTitle();
                 document.chart = new ApexCharts(document.querySelector("#chart"), document.options);
                 document.chart.render();
             }
@@ -176,14 +187,15 @@
             let model_select = document.getElementById("model-select");
             model_select.addEventListener("change", updateParams);
             //fetch test data and render chart
-            fetch('/tickerData')
-                .then(response => response.json())
-                .then(data => {
-                    document.ticker_data = data;
-                    generateAndRenderChart();
-                })
-                .catch(error => console.error('Error:', error));
+            // fetch('/tickerData')
+            //     .then(response => response.json())
+            //     .then(data => {
+            //         document.ticker_data = data;
+            //         generateAndRenderChart();
+            //     })
+            //     .catch(error => console.error('Error:', error));
             
         </script>
+        <script type="text/javascript" src="src/js/KRISS.js"></script>
     </body>
 </html>

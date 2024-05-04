@@ -1,11 +1,18 @@
 {
-    "sma": {
-        "name": "sma",
+    "sma_demo": {
+        "name": "sma_demo",
         "displayName": "SMA (Simple Moving Average)",
         "parameters": [
             {
-                "id": "period",
-                "displayName": "Period",
+                "id": "period_1",
+                "displayName": "Period 1",
+                "type": "integer",
+                "defaultValue": 6,
+                "description": "Number of periods to calculate the average over"
+            },
+            {
+                "id": "period_2",
+                "displayName": "Period 2",
                 "type": "integer",
                 "defaultValue": 20,
                 "description": "Number of periods to calculate the average over"
@@ -14,8 +21,15 @@
                 "id": "percentile",
                 "displayName": "Percentile",
                 "type": "integer",
-                "defaultValue": 10,
+                "defaultValue": 5,
                 "description": "Percentile to calculate the average over"
+            },
+            {
+                "id": "seed",
+                "displayName": "Seed",
+                "type": "integer",
+                "defaultValue": 1000000,
+                "description": "Seed money to start with"
             }
         ],
         "tickers": [
@@ -25,11 +39,23 @@
                 "defaultValue": "BTCUSDT",
                 "description": "Symbol to calculate the average over"
             }
+        ],
+        "output": [
+            {
+                "id": "sma_1",
+                "displayName": "SMA 1",
+                "description": "Simple Moving Average 1"
+            },
+            {
+                "id": "sma_2",
+                "displayName": "SMA 2",
+                "description": "Simple Moving Average 2"
+            }
         ]
     },
     "pair": {
-        "name": "pair",
-        "displayName": "Pair (Pair Trading)",
+        "name": "pairs_demo",
+        "displayName": "Pairs (Pairs Trading)",
         "parameters": [
             {
                 "id": "percentile",
@@ -37,6 +63,13 @@
                 "type": "integer",
                 "defaultValue": 10,
                 "description": "Percentile to calculate the average over"
+            },
+            {
+                "id": "seed",
+                "displayName": "Seed",
+                "type": "integer",
+                "defaultValue": 1000000,
+                "description": "Seed money to start with"
             }
         ],
         "tickers": [
