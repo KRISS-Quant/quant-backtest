@@ -62,6 +62,5 @@ yaxis: {
   }
 }
 };
-      
-      let chart = new ApexCharts(document.querySelector("#chart"), options);
-      chart.render();
+  document.chart = new ApexCharts(document.querySelector("#chart"), options);
+  document.chart.render();
