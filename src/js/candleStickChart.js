@@ -1,3 +1,15 @@
+function normalize(price_data, min, max){
+    var normalized_data = [];
+    for (var i = 0; i < price_data.length; i++){
+        var priceData = [];
+        for (var j = 0; j < 4; j++){
+          priceData.push((price_data[i].price[j] - min) / (max - min));
+        }
+        normalized_data.push(priceData);
+    }
+    return normalized_data;
+}
+
 function generateChartOptions(){
     var options = {
         series: [],
@@ -30,119 +42,53 @@ function generateChartOptions(){
       },
       yaxis: {
         tooltip: {
-            enabled: true,
-            custom: [function({seriesIndex, dataPointIndex, w}) {
-              return '';
-            }, function({ seriesIndex, dataPointIndex, w }) {
-              var o = w.globals.seriesCandleO[seriesIndex][dataPointIndex]
-              var h = w.globals.seriesCandleH[seriesIndex][dataPointIndex]
-              var l = w.globals.seriesCandleL[seriesIndex][dataPointIndex]
-              var c = w.globals.seriesCandleC[seriesIndex][dataPointIndex]
-              var startTime = w.globals.seriesX[seriesIndex][dataPointIndex]
-              var endTime = w.globals.seriesX[seriesIndex][dataPointIndex + 1];
-                if (endTime) {
-                    endTime = new Date(endTime).toLocaleString();
-                } else {
-                    endTime = 'End of Series';
-                }
-              return (
-                  '<div class="apexcharts-tooltip-candlestick">' +
-                  '<div>Start Time: <span class="value">' +
-                  new Date(startTime).toLocaleString() +
-                  '</span></div>' +
-                  '<div>End Time: <span class="value">' +
-                  endTime +
-                  '</span></div>' +
-                  '<div>Open: <span class="value">' +
-                  o +
-                  '</span></div>' +
-                  '<div>High: <span class="value">' +
-                  h +
-                  '</span></div>' +
-                  '<div>Low: <span class="value">' +
-                  l +
-                  '</span></div>' +
-                  '<div>Close: <span class="value">' +
-                  c +
-                  '</span></div>' +
-                  '</div>'
-              )
-            }]
+            enabled: true
+            
           }
-      },
-    //   tooltip: {
-    //     custom: [function({seriesIndex, dataPointIndex, w}) {
-    //       return '';
-    //     }, function({ seriesIndex, dataPointIndex, w }) {
-    //       var o = w.globals.seriesCandleO[seriesIndex][dataPointIndex]
-    //       var h = w.globals.seriesCandleH[seriesIndex][dataPointIndex]
-    //       var l = w.globals.seriesCandleL[seriesIndex][dataPointIndex]
-    //       var c = w.globals.seriesCandleC[seriesIndex][dataPointIndex]
-    //       var startTime = w.globals.seriesX[seriesIndex][dataPointIndex]
-    //       var endTime = w.globals.seriesX[seriesIndex][dataPointIndex + 1];
-    //         if (endTime) {
-    //             endTime = new Date(endTime).toLocaleString();
-    //         } else {
-    //             endTime = 'End of Series';
-    //         }
-    //         console.log('seriesIndex:', seriesIndex);
-    //         console.log('dataPointIndex:', dataPointIndex);
-    //         console.log('o:', o);
-    //         console.log('h:', h);
-    //         console.log('l:', l);
-    //         console.log('c:', c);
-    //         console.log('startTime:', startTime);
-    //         console.log('endTime:', endTime);    
-    //       return (
-    //           '<div class="apexcharts-tooltip-candlestick">' +
-    //           '<div>Start Time: <span class="value">' +
-    //           new Date(startTime).toLocaleString() +
-    //           '</span></div>' +
-    //           '<div>End Time: <span class="value">' +
-    //           endTime +
-    //           '</span></div>' +
-    //           '<div>Open: <span class="value">' +
-    //           o +
-    //           '</span></div>' +
-    //           '<div>High: <span class="value">' +
-    //           h +
-    //           '</span></div>' +
-    //           '<div>Low: <span class="value">' +
-    //           l +
-    //           '</span></div>' +
-    //           '<div>Close: <span class="value">' +
-    //           c +
-    //           '</span></div>' +
-    //           '</div>'
-    //       )
-    //     }]
-    //   }
-    };
-      var count = 0;
-      
-      for (ticker in document.ticker_data){
-        options.series.push({
-            name: ticker,
-            type: 'candlestick',
-            data: []
-        });
-        for (data in document.ticker_data[ticker]){
-
-            options.series[count].data.push({
-                x: document.ticker_data[ticker][data].timestamp[0],
-                y: document.ticker_data[ticker][data].price
-            });
-        }
-        count+=1;
-        // if (count == 2){
-        //     var data1 = document.ticker_data[ticker];
-        //     options.yaxis.push({
-        //         seriesName: 'second',
-        //         opposite: true, // this will display the y-axis on the right
-        //         min: Math.min(...data1.map(data => data.price)), // replace this with the minimum value of your second series
-        //         max: Math.max(...data1.map(data => data.price)) // replace this with the maximum value of your second series
-        //     });
-        //   }
       }
+    };
+    if (Object.keys(document.ticker_data).length == 2){
+        var cnt = 0;
+        for (ticker in document.ticker_data){
+          var tickerData = document.ticker_data[ticker];
+          var temp = [];
+          for (var i =0; i < tickerData.length; i++){
+            temp.push(tickerData[i].price);
+          }
+          var min = Math.min(...temp.flat());
+          var max = Math.max(...temp.flat());
+          
+          var normalized_data = normalize(tickerData, min, max);
+          console.log(normalized_data);
+          options.series.push({
+              name: ticker,
+              type: 'candlestick',
+              data: []
+          });
+          for (data in tickerData){
+            options.series[cnt].data.push({
+                x: tickerData[data].timestamp[0],
+                y: normalized_data[data]
+            });
+          } 
+          cnt +=1;
+        }
+      }
+      // var count = 0;
+      // for (ticker in document.ticker_data){
+      //   options.series.push({
+      //       name: ticker,
+      //       type: 'candlestick',
+      //       data: []
+      //   });
+      //   for (data in document.ticker_data[ticker]){
+
+      //       options.series[count].data.push({
+      //           x: document.ticker_data[ticker][data].timestamp[0],
+      //           y: document.ticker_data[ticker][data].price
+      //       });
+      //   }
+      //   count+=1;
+      // }
     return options;
 }
