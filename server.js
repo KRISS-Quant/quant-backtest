@@ -16,6 +16,10 @@ app.get('/algoMetadata', function(req, res){
   res.sendFile('/algo/algoMetadata.json', { root: __dirname + "" } );
 });
 
+app.get('/testSignal', function(req, res){
+  res.sendFile('/testSignal.json', { root: __dirname + "" } );
+});
+
 app.post('/algo/:algo', upload.single('file'), async (req, res) => {
   try {
     const algorithm = require(`./algo/${req.params.algo}`);

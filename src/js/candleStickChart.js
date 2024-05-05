@@ -143,15 +143,82 @@ if (Object.keys(document.ticker_data).length >= 2){
 return options;
 }
 
-// function addSignals(seriesIndex, data){
-//     document.options.series[seriesIndex].markers = {
-//       size: 3,
-//       shape: 'triangle-down',
-//       strokeWidth: 2,
-//       strokeColor: '#FF0000', // Red
-//       fillColor: '#FF0000',
-//       offsetX: 0,
-//       offsetY: 0,
-//       radius: 2
-//     }
-// }
+function timestampExists(series, seriesIndex, timestamp) {
+  if (series[seriesIndex].data.length === 0) return false;
+  return series[seriesIndex].data.some(point => point.x === timestamp);
+}
+
+function interpolate(series, seriesIndex, timestamp) {
+  if (timestampExists(series, seriesIndex, timestamp)) {
+    return series[seriesIndex].data.find(point => point.x === timestamp).y;
+  }
+  // Find the two points surrounding the timestamp
+  let before = series[seriesIndex].data.filter(point => point.x <= timestamp).sort((a, b) => b.x - a.x)[0];
+  let after = series[seriesIndex].data.filter(point => point.x >= timestamp).sort((a, b) => a.x - b.x)[0];
+
+  // If either point is undefined, return the other point
+  if (!before) return after.y;
+  if (!after) return before.y;
+
+  // Perform linear interpolation
+  let proportion = (timestamp - before.x) / (after.x - before.x);
+  if (series[seriesIndex].type == "candlestick"){
+    var temp = [];
+    for (var i = 0; i < 4; i++){
+      temp.push(before.y[i] + proportion * (after.y[i] - before.y[i]));
+    }
+    return temp;
+  }
+  return before.y + proportion * (after.y - before.y);
+}
+
+function generateAnnotations(series, seriesIndex, data){
+    // add anotations to the chart
+    var points = [];
+    for (var i = 0; i < data.length; i++){
+        var y_coord = interpolate(series, seriesIndex, data[i].timestamp);
+        if (series[seriesIndex].type == "candlestick"){
+          //get the middle value of the candlestick
+            y_coord = (y_coord[1] + y_coord[2]) /2;
+
+        }
+        //buy if signal is true triangle-up
+        if (data[i].signal == true){
+            points.push({
+                x: data[i].timestamp,
+                y: y_coord,
+                marker: {
+                  size: 0, // Sets the size of the marker to 0, making it invisible
+                  // Optionally, you can also set fillColor and strokeColor to 'transparent'
+                  fillColor: 'transparent',
+                  strokeColor: 'transparent'
+              },
+                image: {
+                  path: '/src/img/triangle-up.png',
+                  width: undefined,
+                height: undefined
+                }
+            });
+        } else{
+            points.push({
+                x: data[i].timestamp,
+                y: y_coord,
+                marker: {
+                  size: 0, // Sets the size of the marker to 0, making it invisible
+                  // Optionally, you can also set fillColor and strokeColor to 'transparent'
+                  fillColor: 'transparent',
+                  strokeColor: 'transparent'
+              },
+                image: {
+                  path: '/src/img/triangle-down.png',
+                  width: undefined,
+                  height: undefined
+                }
+            });
+        }
+    }
+    var annotations = {
+      points : points
+    }
+    return annotations;
+}
